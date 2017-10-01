@@ -134,7 +134,7 @@ if __name__ == "__main__":
 ###############################################
 
 ### Write unit tests below this line for the cards code above.
-class test1(unittest.TestCase):
+class testing(unittest.TestCase):
 	def test_1queen(self):
 		c = Card(rank=12)
 		self.assertEqual(c.rank, "Queen")
@@ -166,6 +166,28 @@ class test1(unittest.TestCase):
 	def test_8deck52(self):
 		d = Deck()
 		self.assertEqual(len(d.cards), 52)
+
+	def test_9invoke(self):
+		d = Deck()
+		c = Card()
+		self.assertEqual(type(d.pop_card()),type(c))
+
+	def test_10game(self):
+		p = play_war_game(testing = True)
+		self.assertEqual(len(p),3)
+		self.assertEqual(type(p[0]), str)
+
+	def test_11pop(self):
+		#this tests the pop_card definition
+		d=Deck()
+		self.assertEqual(d.pop_card().__str__(),'King of Spades')
+
+	def test_12shuffle(self):
+	# 	this tests the sort_cards function
+		d=Deck()
+		d.shuffle()
+		self.assertNotEqual(d.pop_card().__str__(),'King of Spades')
+	# 	self.assertEqual()
 
 
 #############
