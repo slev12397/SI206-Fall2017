@@ -100,17 +100,23 @@ cur.execute('CREATE TABLE Tweets(tweet_id NUMBER, text TEXT, user_posted NUMBER,
 
 
 tup = umich_tweets[0]['user']['id_str'], umich_tweets[0]['user']['screen_name'], umich_tweets[0]['user']['favourites_count'], umich_tweets[0]['user']['description']
-cur.execute('INSERT INTO Users (user_id, screen_name, num_favs, description) VALUES (?,?,?,?)',tup)
+cur.execute('SELECT * FROM Users WHERE user_id = ?', (umich_tweets[0]['user']['id_str'],))
+if len(cur.fetchall()) == 0:
+	cur.execute('INSERT INTO Users (user_id, screen_name, num_favs, description) VALUES (?,?,?,?)',tup)
 
 for tweet in umich_tweets:
 	for mentioned_user in tweet['entities']['user_mentions']:
 		user_info = api.get_user(mentioned_user['screen_name'])
 		tup = user_info['id_str'], user_info['screen_name'],user_info['favourites_count'], user_info['description']
-		cur.execute('INSERT INTO Users (user_id, screen_name, num_favs, description) VALUES (?,?,?,?)',tup)
+		cur.execute('SELECT * FROM Users WHERE user_id = ?', (user_info['id_str'],))
+		if len(cur.fetchall()) == 0:
+			cur.execute('INSERT INTO Users (user_id, screen_name, num_favs, description) VALUES (?,?,?,?)',tup)
 
 for tweet in umich_tweets:
 	tupl = tweet['id_str'], tweet['text'], tweet['user']['id_str'], tweet['created_at'], tweet['retweet_count']
-	cur.execute('INSERT INTO Tweets (tweet_id, text, user_posted, time_posted, retweets) VALUES (?,?,?,?,?)',tupl)
+	cur.execute('SELECT * FROM Tweets WHERE tweet_id = ?', (tweet['id_str'],))
+	if len(cur.fetchall()) == 0:
+		cur.execute('INSERT INTO Tweets (tweet_id, text, user_posted, time_posted, retweets) VALUES (?,?,?,?,?)',tupl)
 ## You should load into the Tweets table:
 # Info about all the tweets (at least 20) that you gather from the
 # umich timeline.
