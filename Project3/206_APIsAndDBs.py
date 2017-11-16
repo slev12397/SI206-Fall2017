@@ -58,6 +58,7 @@ except:
 	CACHE_DICTION ={}
 
 def get_user_tweets(user):
+# I expect the input to be a user screen name and the output to be a JSON object
 	if user in CACHE_DICTION:
 		print("the user was in the cache")
 		return CACHE_DICTION[user]
@@ -75,11 +76,9 @@ def get_user_tweets(user):
 		print("Wasn't in cache and wasn't valid search either")
 		return None
 
-
 # Write an invocation to the function for the "umich" user timeline and
 # save the result in a variable called umich_tweets:
 
-umich_tweets = get_user_tweets('@umich')
 
 
 ## Task 2 - Creating database and loading data into database
@@ -98,11 +97,12 @@ cur.execute('CREATE TABLE Users(user_id NUMBER, screen_name TEXT, num_favs NUMBE
 cur.execute('DROP TABLE IF EXISTS Tweets')
 cur.execute('CREATE TABLE Tweets(tweet_id NUMBER, text TEXT, user_posted NUMBER, time_posted TIMESTAMP, retweets NUMBER)')
 
-
-tup = umich_tweets[0]['user']['id_str'], umich_tweets[0]['user']['screen_name'], umich_tweets[0]['user']['favourites_count'], umich_tweets[0]['user']['description']
-cur.execute('SELECT * FROM Users WHERE user_id = ?', (umich_tweets[0]['user']['id_str'],))
-if len(cur.fetchall()) == 0:
-	cur.execute('INSERT INTO Users (user_id, screen_name, num_favs, description) VALUES (?,?,?,?)',tup)
+umich_tweets = get_user_tweets('@umich')
+for tweet in umich_tweets:
+	tup = tweet['user']['id_str'], tweet['user']['screen_name'], tweet['user']['favourites_count'], tweet['user']['description']
+	cur.execute('SELECT * FROM Users WHERE user_id = ?', (tweet['user']['id_str'],))
+	if len(cur.fetchall()) == 0:
+		cur.execute('INSERT INTO Users (user_id, screen_name, num_favs, description) VALUES (?,?,?,?)',tup)
 
 for tweet in umich_tweets:
 	for mentioned_user in tweet['entities']['user_mentions']:
@@ -117,6 +117,7 @@ for tweet in umich_tweets:
 	cur.execute('SELECT * FROM Tweets WHERE tweet_id = ?', (tweet['id_str'],))
 	if len(cur.fetchall()) == 0:
 		cur.execute('INSERT INTO Tweets (tweet_id, text, user_posted, time_posted, retweets) VALUES (?,?,?,?,?)',tupl)
+
 ## You should load into the Tweets table:
 # Info about all the tweets (at least 20) that you gather from the
 # umich timeline.
