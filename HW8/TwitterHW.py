@@ -46,7 +46,7 @@ def get_tweets():
             fw = open(CACHE_FNAME,"w")
             fw.write(dumped_json_cache)
             fw.close()
-            return CACHE_DICTION['user']
+            return CACHE_DICTION['umsi']
         except:
             print("Wasn't in cache and wasn't valid search either")
             return None
