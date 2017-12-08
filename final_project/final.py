@@ -3,27 +3,26 @@ import json
 import matplotlib.pyplot as plt
 import time
 from matplotlib import style
-import instagram_info
-import spotipy
 import sys
 import spotipy.util as util
+from spotipy.oauth2 import SpotifyClientCredentials
+import pprint
+import spotipy
+import spotipy
+from datetime import datetime
+import calendar
 
+token = util.prompt_for_user_token('slev12397','user-library-read',client_id='8022908ec4584139b085f818f10f11a8',client_secret='78334e2feb08493f948290e78dcba0f3',redirect_uri='http://localhost/')
+spotify = spotipy.Spotify(auth=token)
+results = spotify.current_user_saved_tracks(limit=50, offset=0)
+results2 = spotify.next(results)
 
+songs_duration = {}
+for track in results['items']:
+    time = track['track']["duration_ms"]
+    songs_duration[track['track']['name']] = time
+for track in results2['items']:
+    time = track['track']["duration_ms"]
+    songs_duration[track['track']['name']] = time
 
-def instagram_collector():
-    access_token = instagram_info.access_token
-    client_id = instagram_info.client_id
-    url = 'https://api.instagram.com/v1/users/self/media/liked?access_token='+ access_token
-    response = requests.get(url)
-    return json.loads(response.text)
-def spotify_collector():
-    spotify = spotipy.Spotify()
-    util.prompt_for_user_token('1447449240','user-read-recently-played',client_id='76422d4dd50d44469f327b071520f5a7',client_secret='f2b6931f6cc441a09894d84790759c75',redirect_uri='https://localhost:3000/callback')
-    return spotify.current_user_recently_played(limit=50)
-
-def youtube_collector():
-    pass
-sp = spotipy.Spotify()
-
-results = sp.search(q='weezer', limit=20)
-print(results)
+print(songs_duration)
